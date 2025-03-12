@@ -5,9 +5,12 @@ import org.example.sportflow.DBC.ConnectionDb;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class SeanceDAO {
+public class UserDAO {
     private Connection con;
-    public SeanceDAO() throws SQLException, ClassNotFoundException {
+    public UserDAO() throws SQLException, ClassNotFoundException {
         con = ConnectionDb.getconnectiondb();
     }
+
+
+
 }
