@@ -1,34 +1,28 @@
 package org.example.sportflow.Model;
 
-public class Entraineur {
-    private int id;
-    private String nom;
+public class Entraineur extends User {
+    private String name;
     private String specialite;
 
-    public Entraineur(int id, String nom, String specialite) {
-        this.id = id;
-        this.nom = nom;
+
+    public Entraineur() {
+        super();
+        this.role = Role.entraineur;
+    }
+
+    public Entraineur(String username, String password, String name, String specialite) {
+        super(username, password, Role.entraineur);
+        this.name = name;
         this.specialite = specialite;
     }
 
-    public Entraineur() {
-
+    // Getters and Setters
+    public String getName() {
+        return name;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSpecialite() {
@@ -37,5 +31,10 @@ public class Entraineur {
 
     public void setSpecialite(String specialite) {
         this.specialite = specialite;
+    }
+
+    @Override
+    public String toString() {
+        return "Coach{id=" + id + ", username='" + username + "', name='" + name + "', specialite='" + specialite + "'}";
     }
 }

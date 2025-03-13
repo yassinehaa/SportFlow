@@ -8,36 +8,61 @@ import java.sql.Statement;
 public class ConnectionDb {
     public static Connection getconnectiondb() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/SportFlow", "root", "");
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/sportflow", "root", "");
         Statement stm = connection.createStatement();
 
-        String Membretable = "CREATE TABLE IF NOT EXISTS membre(" +
-                "id INT PRIMARY KEY AUTO_INCREMENT," +
-                "name VARCHAR(255)," +
-                "datdenaissance DATE," +
-                "sport VARCHAR(55))";
-        stm.execute(Membretable);
+        try {
+            // Users table
+            String createUsersTable = "CREATE TABLE IF NOT EXISTS users (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "username VARCHAR(50) NOT NULL UNIQUE, " +
+                    "password VARCHAR(100) NOT NULL, " +
+                    "role ENUM('admin', 'member', 'coach') NOT NULL" +
+                    ")";
+            stm.executeUpdate(createUsersTable);
 
-        String Entraineurtable = "CREATE TABLE IF NOT EXISTS entraineur(" +
-                "id INT PRIMARY KEY AUTO_INCREMENT," +
-                "nom VARCHAR(20)," +
-                "specialite VARCHAR(60))";
-        stm.execute(Entraineurtable);
+            // Coaches table
+            String createCoachesTable = "CREATE TABLE IF NOT EXISTS coaches (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "user_id INT NOT NULL, " +
+                    "name VARCHAR(100) NOT NULL, " +
+                    "specialite VARCHAR(100), " +
+                    "FOREIGN KEY (user_id) REFERENCES users(id)" +
+                    ")";
+            stm.executeUpdate(createCoachesTable);
 
-        String Seancetable = "CREATE TABLE IF NOT EXISTS seance(" +
-                "id INT PRIMARY KEY AUTO_INCREMENT," +
-                "idMember INT," +
-                "idEntraneur INT," +
-                "dateetheure DATETIME," +
-                "FOREIGN KEY (idMember) REFERENCES membre(id)," +
-                "FOREIGN KEY (idEntraneur) REFERENCES entraineur(id))";
-        stm.execute(Seancetable);
+            // Sessions table
+            String createSessionsTable = "CREATE TABLE IF NOT EXISTS sessions (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "name VARCHAR(100) NOT NULL, " +
+                    "date DATETIME NOT NULL, " +
+                    "coach_id INT NOT NULL, " +
+                    "description TEXT, " +
+                    "FOREIGN KEY (coach_id) REFERENCES coaches(id)" +
+                    ")";
+            stm.executeUpdate(createSessionsTable);
 
-        String User = "CREATE TABLE IF NOT EXISTS users (" +
-                "id INT PRIMARY KEY AUTO_INCREMENT," +
-                "username VARCHAR(20)," +
-                "password VARCHAR(100))";
-        stm.execute(User);
+            // Members table
+            String createMembersTable = "CREATE TABLE IF NOT EXISTS members (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "user_id INT NOT NULL, " +
+                    "name VARCHAR(100) NOT NULL, " +
+                    "FOREIGN KEY (user_id) REFERENCES users(id)" +
+                    ")";
+            stm.executeUpdate(createMembersTable);
+
+            // Members-Sessions junction table
+            String createMembersSessionsTable = "CREATE TABLE IF NOT EXISTS members_sessions (" +
+                    "member_id INT NOT NULL, " +
+                    "session_id INT NOT NULL, " +
+                    "PRIMARY KEY (member_id, session_id), " +
+                    "FOREIGN KEY (member_id) REFERENCES members(id), " +
+                    "FOREIGN KEY (session_id) REFERENCES sessions(id)" +
+                    ")";
+            stm.executeUpdate(createMembersSessionsTable);
+        } finally {
+            stm.close(); // Close the Statement to prevent resource leaks
+        }
 
         return connection;
     }
