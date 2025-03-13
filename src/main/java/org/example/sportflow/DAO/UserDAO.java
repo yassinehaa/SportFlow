@@ -22,11 +22,13 @@ public class UserDAO {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    String roleStr = rs.getString("role");
+                    User.Role role = (roleStr != null) ? User.Role.valueOf(roleStr.replace("coach", "entraineur").replace("member", "membre")) : null;
                     User user = new User(
                             rs.getInt("id"),
                             rs.getString("username"),
                             rs.getString("password"),
-                            User.Role.valueOf(rs.getString("role"))
+                            role
                     );
                     return user;
                 }

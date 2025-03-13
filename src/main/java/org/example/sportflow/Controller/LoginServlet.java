@@ -37,31 +37,45 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
+        User user = null;
         try {
-            User user = userDAO.getUserByUsername(username);
-            if (user != null && password != null && password.equals(user.getPassword())) {
-                HttpSession session = request.getSession();
-                session.setAttribute("currentUser", user);
-                switch (user.getRole()) {
-                    case admin:
-                        response.sendRedirect("/adminDashboard");
-                        break;
-                    case membre:
-                        response.sendRedirect("/memberDashboard");
-                        break;
-                    case entraineur:
-                        response.sendRedirect("/coachDashboard");
-                        break;
-                    default:
-                        request.setAttribute("error", "Unknown role");
-                        request.getRequestDispatcher("/Auth/Login.jsp").forward(request, response);
-                }
-            } else {
-                request.setAttribute("error", "Invalid username or password");
-                request.getRequestDispatcher("/Auth/Login.jsp").forward(request, response);
-            }
+            user = userDAO.getUserByUsername(username);
         } catch (SQLException e) {
             throw new ServletException("Database error during login", e);
+        }
+
+        // Check if user exists and credentials are valid
+        if (user == null || user.getPassword() == null || !user.getPassword().equals(password)) {
+            request.setAttribute("error", "Invalid username or password");
+            request.getRequestDispatcher("/Auth/Login.jsp").forward(request, response);
+            return;
+        }
+
+        // Check if role is null
+        if (user.getRole() == null) {
+            request.setAttribute("error", "User role is not defined");
+            request.getRequestDispatcher("/Auth/Login.jsp").forward(request, response);
+            return;
+        }
+
+        // Store user in session
+        HttpSession session = request.getSession();
+        session.setAttribute("currentUser", user);
+
+        // Redirect based on role
+        switch (user.getRole()) {
+            case admin:
+                response.sendRedirect("/adminDashboard");
+                break;
+            case membre:
+                response.sendRedirect("/memberDashboard");
+                break;
+            case entraineur:
+                response.sendRedirect("/coachDashboard");
+                break;
+            default:
+                request.setAttribute("error", "Unknown role");
+                request.getRequestDispatcher("/Auth/Login.jsp").forward(request, response);
         }
     }
 }
