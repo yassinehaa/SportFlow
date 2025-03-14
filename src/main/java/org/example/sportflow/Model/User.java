@@ -1,7 +1,5 @@
 package org.example.sportflow.Model;
 
-import java.time.LocalDateTime;
-
 public class User {
     protected int id;
     protected String username;
@@ -9,13 +7,14 @@ public class User {
     protected Role role;
 
     public User(int id, String username, String password, Role role) {
-    }
-
-    public void setDateCreated(LocalDateTime dateCreated) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
     }
 
     public enum Role {
-        admin , membre , entraineur
+        admin, membre, entraineur
     }
 
     // Constructors
@@ -28,7 +27,6 @@ public class User {
         this.role = role;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -60,7 +58,6 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
-
 
     @Override
     public String toString() {

@@ -9,15 +9,14 @@ public class ConnectionDb {
     public static Connection getconnectiondb() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.cj.jdbc.Driver");
         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/sportflow", "root", "");
-        Statement stm = connection.createStatement();
 
-        try {
+        try (Statement stm = connection.createStatement()) {
             // Users table
             String createUsersTable = "CREATE TABLE IF NOT EXISTS users (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY, " +
                     "username VARCHAR(50) NOT NULL UNIQUE, " +
                     "password VARCHAR(100) NOT NULL, " +
-                    "role ENUM('admin', 'member', 'coach') NOT NULL" +
+                    "role ENUM('admin', 'membre', 'entraineur') NOT NULL" +
                     ")";
             stm.executeUpdate(createUsersTable);
 
@@ -34,12 +33,13 @@ public class ConnectionDb {
             // Sessions table
             String createSessionsTable = "CREATE TABLE IF NOT EXISTS sessions (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                    "name VARCHAR(100) NOT NULL, " +
-                    "date DATETIME NOT NULL, " +
-                    "coach_id INT NOT NULL, " +
-                    "description TEXT, " +
-                    "FOREIGN KEY (coach_id) REFERENCES coaches(id)" +
+                    "idmembre INT NOT NULL, " +
+                    "identraineur INT NOT NULL, " +
+                    "dateetheure DATETIME NOT NULL, " +
+                    "FOREIGN KEY (idmembre) REFERENCES members(id), " +
+                    "FOREIGN KEY (identraineur) REFERENCES coaches(id)" +
                     ")";
+            stm.executeUpdate(createSessionsTable);
             stm.executeUpdate(createSessionsTable);
 
             // Members table
@@ -50,18 +50,6 @@ public class ConnectionDb {
                     "FOREIGN KEY (user_id) REFERENCES users(id)" +
                     ")";
             stm.executeUpdate(createMembersTable);
-
-            // Members-Sessions junction table
-            String createMembersSessionsTable = "CREATE TABLE IF NOT EXISTS members_sessions (" +
-                    "member_id INT NOT NULL, " +
-                    "session_id INT NOT NULL, " +
-                    "PRIMARY KEY (member_id, session_id), " +
-                    "FOREIGN KEY (member_id) REFERENCES members(id), " +
-                    "FOREIGN KEY (session_id) REFERENCES sessions(id)" +
-                    ")";
-            stm.executeUpdate(createMembersSessionsTable);
-        } finally {
-            stm.close(); // Close the Statement to prevent resource leaks
         }
 
         return connection;

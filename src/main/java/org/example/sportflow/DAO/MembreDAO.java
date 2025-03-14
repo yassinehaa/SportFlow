@@ -49,11 +49,10 @@ public class MembreDAO {
         return null;
     }
 
-    // View own sessions
     public List<Seance> afficherSeances(User currentUser) throws SQLException {
         checkMember(currentUser);
-        List<Seance> seances = new ArrayList<>();
-        String sql = "SELECT * FROM seances WHERE idmembre = ?";
+        List<Seance> sessions = new ArrayList<>();
+        String sql = "SELECT * FROM sessions WHERE idmembre = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, currentUser.getId());
             try (ResultSet rs = ps.executeQuery()) {
@@ -64,10 +63,10 @@ public class MembreDAO {
                             rs.getTimestamp("dateetheure").toLocalDateTime()
                     );
                     seance.setId(rs.getInt("id"));
-                    seances.add(seance);
+                    sessions.add(seance);
                 }
             }
         }
-        return seances;
+        return sessions;
     }
 }

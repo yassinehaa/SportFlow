@@ -65,13 +65,13 @@ public class LoginServlet extends HttpServlet {
         // Redirect based on role
         switch (user.getRole()) {
             case admin:
-                response.sendRedirect("/adminDashboard");
+                response.sendRedirect("adminDashboard");
                 break;
             case membre:
-                response.sendRedirect("/memberDashboard");
+                response.sendRedirect("memberDashboard");
                 break;
             case entraineur:
-                response.sendRedirect("/coachDashboard");
+                response.sendRedirect("coachDashboard");
                 break;
             default:
                 request.setAttribute("error", "Unknown role");

@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +22,11 @@ public class SeanceDAO {
         List<Seance> seances = new ArrayList<>();
         String sql;
         if (currentUser.getRole() == User.Role.admin) {
-            sql = "SELECT * FROM seances";
+            sql = "SELECT * FROM sessions";
         } else if (currentUser.getRole() == User.Role.membre) {
-            sql = "SELECT * FROM seances WHERE idmembre = ?";
+            sql = "SELECT * FROM sessions WHERE idmembre = ?";
         } else if (currentUser.getRole() == User.Role.entraineur) {
-            sql = "SELECT * FROM seances WHERE identraineur = ?";
+            sql = "SELECT * FROM sessions WHERE identraineur = ?";
         } else {
             throw new SQLException("Unauthorized access.");
         }
@@ -54,11 +53,11 @@ public class SeanceDAO {
     public Seance getSeanceById(int id, User currentUser) throws SQLException {
         String sql;
         if (currentUser.getRole() == User.Role.admin) {
-            sql = "SELECT * FROM seances WHERE id = ?";
+            sql = "SELECT * FROM sessions WHERE id = ?";
         } else if (currentUser.getRole() == User.Role.membre) {
-            sql = "SELECT * FROM seances WHERE id = ? AND idmembre = ?";
+            sql = "SELECT * FROM sessions WHERE id = ? AND idmembre = ?";
         } else if (currentUser.getRole() == User.Role.entraineur) {
-            sql = "SELECT * FROM seances WHERE id = ? AND identraineur = ?";
+            sql = "SELECT * FROM sessions WHERE id = ? AND identraineur = ?";
         } else {
             throw new SQLException("Unauthorized access.");
         }

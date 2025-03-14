@@ -15,7 +15,6 @@ public class UserDAO {
         con = ConnectionDb.getconnectiondb();
     }
 
-    // Login functionality (available to all)
     public User getUserByUsername(String username) throws SQLException {
         String sql = "SELECT id, username, password, role FROM users WHERE username = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -37,12 +36,11 @@ public class UserDAO {
         return null;
     }
 
-    // View own profile (available to all)
     public User getUserById(int id, User currentUser) throws SQLException {
         if (currentUser.getId() != id) {
             throw new SQLException("You can only view your own profile.");
         }
-        String sql = "SELECT Damian, username, password, role FROM users WHERE id = ?";
+        String sql = "SELECT id, username, password, role FROM users WHERE id = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {

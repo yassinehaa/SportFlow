@@ -68,17 +68,16 @@ public class AdminDAO {
     public List<User> afficherUsers(User currentUser) throws SQLException {
         checkAdmin(currentUser);
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM users";
+        String sql = "SELECT id, username, password, role FROM users"; // Updated to exclude date_created
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 User user = new User(
+                        rs.getInt("id"),
                         rs.getString("username"),
                         rs.getString("password"),
                         User.Role.valueOf(rs.getString("role"))
                 );
-                user.setId(rs.getInt("id"));
-                user.setDateCreated(rs.getTimestamp("date_created").toLocalDateTime());
                 users.add(user);
             }
         }
@@ -110,8 +109,8 @@ public class AdminDAO {
 
     public void supprimerMembre(int id, User currentUser) throws SQLException {
         checkAdmin(currentUser);
-        String sqlMember = "DELETE FROM members WHERE user_id = ?";
-        try (PreparedStatement psMember = con.prepareStatement(sqlMember)) {
+        String sql = "DELETE FROM members WHERE user_id = ?";
+        try (PreparedStatement psMember = con.prepareStatement(sql)) {
             psMember.setInt(1, id);
             psMember.executeUpdate();
         }
@@ -164,8 +163,8 @@ public class AdminDAO {
 
     public void supprimerEntraineur(int id, User currentUser) throws SQLException {
         checkAdmin(currentUser);
-        String sqlCoach = "DELETE FROM coaches WHERE user_id = ?";
-        try (PreparedStatement psCoach = con.prepareStatement(sqlCoach)) {
+        String sql = "DELETE FROM coaches WHERE user_id = ?";
+        try (PreparedStatement psCoach = con.prepareStatement(sql)) {
             psCoach.setInt(1, id);
             psCoach.executeUpdate();
         }
@@ -195,7 +194,7 @@ public class AdminDAO {
     // Seance CRUD
     public void ajouterSeance(Seance seance, User currentUser) throws SQLException {
         checkAdmin(currentUser);
-        String sql = "INSERT INTO seances (idmembre, identraineur, dateetheure) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO sessions (idmembre, identraineur, dateetheure) VALUES (?, ?, ?)";
         try (PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, seance.getIdmembre());
             ps.setInt(2, seance.getIdentraineur());
@@ -211,7 +210,7 @@ public class AdminDAO {
 
     public void modifierSeance(Seance seance, User currentUser) throws SQLException {
         checkAdmin(currentUser);
-        String sql = "UPDATE seances SET idmembre = ?, identraineur = ?, dateetheure = ? WHERE id = ?";
+        String sql = "UPDATE sessions SET idmembre = ?, identraineur = ?, dateetheure = ? WHERE id = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, seance.getIdmembre());
             ps.setInt(2, seance.getIdentraineur());
@@ -223,7 +222,7 @@ public class AdminDAO {
 
     public void supprimerSeance(int id, User currentUser) throws SQLException {
         checkAdmin(currentUser);
-        String sql = "DELETE FROM seances WHERE id = ?";
+        String sql = "DELETE FROM sessions WHERE id = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
@@ -233,7 +232,7 @@ public class AdminDAO {
     public List<Seance> afficherSeances(User currentUser) throws SQLException {
         checkAdmin(currentUser); // Admin sees all sessions
         List<Seance> seances = new ArrayList<>();
-        String sql = "SELECT * FROM seances";
+        String sql = "SELECT * FROM sessions";
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {

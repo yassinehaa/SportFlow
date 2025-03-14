@@ -35,7 +35,7 @@ public class EntraineurServlet extends HttpServlet {
         try {
             request.setAttribute("entraineur", entraineurDAO.getEntraineurById(currentUser.getId(), currentUser));
             request.setAttribute("seances", entraineurDAO.afficherSeances(currentUser));
-            request.getRequestDispatcher("WEB-INF/dashboards/coachDashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/dashboards/coachDashboard.jsp").forward(request, response);
         } catch (SQLException e) {
             throw new ServletException("Error retrieving coach data", e);
         }

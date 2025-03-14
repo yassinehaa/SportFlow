@@ -37,7 +37,7 @@ public class MembreServlet extends HttpServlet {
         try {
             request.setAttribute("membre", membreDAO.getMembreById(currentUser.getId(), currentUser));
             request.setAttribute("seances", membreDAO.afficherSeances(currentUser));
-            request.getRequestDispatcher("WEB-INF/dashboards/memberDashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/dashboards/memberDashboard.jsp").forward(request, response);
         } catch (SQLException e) {
             throw new ServletException("Error retrieving member data", e);
         }
